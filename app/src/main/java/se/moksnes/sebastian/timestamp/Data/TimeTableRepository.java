@@ -19,10 +19,15 @@ public class TimeTableRepository {
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        int operation = 0;
+        if(in){
+            operation = 1;
+        }
+
 // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(TimeTableContract.TableEntry.COLUMN_NAME_Time, time.toString());
-        values.put(TimeTableContract.TableEntry.COLUMN_NAME_InOut, in);
+        values.put(TimeTableContract.TableEntry.COLUMN_NAME_Operation, operation);
 
 // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(TimeTableContract.TableEntry.TABLE_NAME, null, values);
@@ -37,7 +42,7 @@ public class TimeTableRepository {
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
         String[] projection = {
-                TimeTableContract.TableEntry.COLUMN_NAME_InOut,
+                TimeTableContract.TableEntry.COLUMN_NAME_Operation,
         };
 
 
@@ -55,7 +60,10 @@ public class TimeTableRepository {
                 sortOrder                                 // The sort order
         );
         c.moveToFirst();
-        long itemId = c.getInt(0);
-        return itemId == 1;
+        if(c!= null && c.getCount() > 0) {
+            long itemId = c.getInt(0);
+            return itemId == 1;
+        }
+        return false;
     }
 }

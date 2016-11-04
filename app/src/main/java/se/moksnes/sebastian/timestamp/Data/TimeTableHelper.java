@@ -17,7 +17,7 @@ public class TimeTableHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + TimeTableContract.TableEntry.TABLE_NAME + " (" +
                     TimeTableContract.TableEntry._ID + " INTEGER PRIMARY KEY," +
                     TimeTableContract.TableEntry.COLUMN_NAME_Time + TEXT_TYPE + COMMA_SEP +
-                    TimeTableContract.TableEntry.COLUMN_NAME_InOut + INTEGER_TYPE + " )";
+                    TimeTableContract.TableEntry.COLUMN_NAME_Operation + INTEGER_TYPE + " )";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + TimeTableContract.TableEntry.TABLE_NAME;

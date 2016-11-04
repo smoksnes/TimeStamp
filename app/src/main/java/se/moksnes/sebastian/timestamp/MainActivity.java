@@ -23,7 +23,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.sql.Time;
+import java.util.Date;
 import java.util.List;
+
+import se.moksnes.sebastian.timestamp.Data.TimeTableRepository;
 
 import static android.R.attr.id;
 
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     WifiManager mWifiManager;
+    TimeTableRepository repo;
 
     private final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
         @Override
@@ -50,8 +55,14 @@ public class MainActivity extends AppCompatActivity
 
     public void stateChanged(boolean isIn){
         TextView text = (TextView)findViewById(R.id.fooText);
-        if(isIn)
-        {
+        Context context= getApplicationContext();
+        Boolean currentState = repo.isIn(context);
+
+        if(currentState != isIn){
+            Date dt = new Date();
+            repo.insert(context, dt, isIn);
+        }
+        if(isIn) {
             text.setText("Inne!");
         }
         else{
@@ -62,8 +73,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
-        getWifi();
-
         if (requestCode == 0x12345
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // Do something with granted permission
@@ -74,6 +83,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        repo = new TimeTableRepository();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

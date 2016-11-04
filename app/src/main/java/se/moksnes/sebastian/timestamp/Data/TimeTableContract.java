@@ -16,6 +16,6 @@ public final class TimeTableContract {
         public static class TableEntry implements BaseColumns {
             public static final String TABLE_NAME = "timeTable";
             public static final String COLUMN_NAME_Time = "time";
-            public static final String COLUMN_NAME_InOut = "In";
+            public static final String COLUMN_NAME_Operation = "operation";
         }
 }
