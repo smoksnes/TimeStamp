@@ -13,8 +13,12 @@ import java.util.Date;
 
 public class TimeTableRepository {
 
-    public void insert(Context context, Date time, Boolean in){
+    public void insert(Context context, Boolean in){
+
+
         TimeTableHelper mDbHelper = new TimeTableHelper(context);
+
+        //mDbHelper.dropDb(context);
 
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -26,7 +30,7 @@ public class TimeTableRepository {
 
 // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
-        values.put(TimeTableContract.TableEntry.COLUMN_NAME_Time, time.toString());
+        values.put(TimeTableContract.TableEntry.COLUMN_NAME_Time, System.currentTimeMillis());
         values.put(TimeTableContract.TableEntry.COLUMN_NAME_Operation, operation);
 
 // Insert the new row, returning the primary key value of the new row
@@ -60,10 +64,12 @@ public class TimeTableRepository {
                 sortOrder                                 // The sort order
         );
         c.moveToFirst();
+        return false;
+        /*
         if(c!= null && c.getCount() > 0) {
             long itemId = c.getInt(0);
             return itemId == 1;
         }
-        return false;
+        return false;*/
     }
 }

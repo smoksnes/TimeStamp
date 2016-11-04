@@ -10,13 +10,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class TimeTableHelper extends SQLiteOpenHelper {
 
-    private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + TimeTableContract.TableEntry.TABLE_NAME + " (" +
                     TimeTableContract.TableEntry._ID + " INTEGER PRIMARY KEY," +
-                    TimeTableContract.TableEntry.COLUMN_NAME_Time + TEXT_TYPE + COMMA_SEP +
+                    TimeTableContract.TableEntry.COLUMN_NAME_Time + INTEGER_TYPE + COMMA_SEP +
                     TimeTableContract.TableEntry.COLUMN_NAME_Operation + INTEGER_TYPE + " )";
 
     private static final String SQL_DELETE_ENTRIES =
@@ -40,5 +39,9 @@ public class TimeTableHelper extends SQLiteOpenHelper {
         }
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             onUpgrade(db, oldVersion, newVersion);
+        }
+
+        public void dropDb(Context context){
+            context.deleteDatabase(DATABASE_NAME);
         }
 }

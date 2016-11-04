@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -28,47 +29,18 @@ import java.util.Date;
 import java.util.List;
 
 import se.moksnes.sebastian.timestamp.Data.TimeTableRepository;
+import se.moksnes.sebastian.timestamp.Receivers.LocationWatcherIntent;
 
 import static android.R.attr.id;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    WifiManager mWifiManager;
-    TimeTableRepository repo;
 
-    private final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context c, Intent intent) {
-            if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
-                List<ScanResult> mScanResults = mWifiManager.getScanResults();
-                boolean isIn = false;
-                for(ScanResult result : mScanResults){
-                    if(result.SSID.equals("Moksnes Wireless MkII")){
-                        isIn = true;
-                    }
-                }
-                stateChanged(isIn);
-            }
-        }
-    };
 
-    public void stateChanged(boolean isIn){
-        TextView text = (TextView)findViewById(R.id.fooText);
-        Context context= getApplicationContext();
-        Boolean currentState = repo.isIn(context);
 
-        if(currentState != isIn){
-            Date dt = new Date();
-            repo.insert(context, dt, isIn);
-        }
-        if(isIn) {
-            text.setText("Inne!");
-        }
-        else{
-            text.setText("Ute");
-        }
-    }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -76,14 +48,12 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == 0x12345
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // Do something with granted permission
-            getWifi();
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        repo = new TimeTableRepository();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -110,22 +80,19 @@ public class MainActivity extends AppCompatActivity
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
 
         }else{
-            getWifi();
             //do something, permission was previously granted; or legacy device
         }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Intent intent = new Intent(this, LocationWatcherIntent.class);
+        startService(intent);
     }
 
 
     // call this method only if you are on 6.0 and up, otherwise call doGetWifi()
-    private void getWifi() {
-        mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        registerReceiver(mWifiScanReceiver,
-                new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        mWifiManager.startScan();
-    }
+
 
     @Override
     public void onBackPressed() {
