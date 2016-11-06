@@ -13,8 +13,8 @@ import java.util.Date;
 
 public class TimeTableRepository {
 
-    public void insert(Context context, Boolean in){
-
+    public Long insert(Context context, Boolean in){
+        Long ms = System.currentTimeMillis();
 
         TimeTableHelper mDbHelper = new TimeTableHelper(context);
 
@@ -23,19 +23,19 @@ public class TimeTableRepository {
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        int operation = 0;
+        int operation = 2;
         if(in){
             operation = 1;
         }
 
 // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
-        values.put(TimeTableContract.TableEntry.COLUMN_NAME_Time, System.currentTimeMillis());
+        values.put(TimeTableContract.TableEntry.COLUMN_NAME_Time, ms);
         values.put(TimeTableContract.TableEntry.COLUMN_NAME_Operation, operation);
 
 // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(TimeTableContract.TableEntry.TABLE_NAME, null, values);
-
+        db.insert(TimeTableContract.TableEntry.TABLE_NAME, null, values);
+        return ms;
     }
 
     public boolean isIn(Context context){
@@ -64,12 +64,12 @@ public class TimeTableRepository {
                 sortOrder                                 // The sort order
         );
         c.moveToFirst();
-        return false;
-        /*
+
+
         if(c!= null && c.getCount() > 0) {
             long itemId = c.getInt(0);
             return itemId == 1;
         }
-        return false;*/
+        return false;
     }
 }
