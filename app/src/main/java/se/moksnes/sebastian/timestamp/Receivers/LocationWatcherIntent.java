@@ -33,22 +33,19 @@ public class LocationWatcherIntent extends Service {
     private Looper mServiceLooper;
     ArrayList<Messenger> mClients = new ArrayList<Messenger>();
     private ServiceHandler mServiceHandler;
-    /** Holds last value set by a client. */
-    int mValue = 0;
-
     /**
      * Command to the service to register a client, receiving callbacks
      * from the service.  The Message's replyTo field must be a Messenger of
      * the client where callbacks should be sent.
      */
-    public static final int MSG_REGISTER_CLIENT = 1;
+    public static final int MSG_REGISTER_CLIENT = 90;
 
     /**
      * Command to the service to unregister a client, ot stop receiving callbacks
      * from the service.  The Message's replyTo field must be a Messenger of
      * the client as previously given with MSG_REGISTER_CLIENT.
      */
-    public static final int MSG_UNREGISTER_CLIENT = 2;
+    public static final int MSG_UNREGISTER_CLIENT = 91;
 
     /**
      * Command to service to set a new value.  This can be sent to the
@@ -198,10 +195,5 @@ public class LocationWatcherIntent extends Service {
             // the service in the middle of handling another job
             //stopSelf(msg.arg1);
         }
-    }
-
-    //callbacks interface for communication with service clients!
-    public interface Callbacks{
-        public void updateClient(long data);
     }
 }

@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.renderscript.ScriptGroup;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -120,10 +119,6 @@ public class MainActivity extends AppCompatActivity
         doBindService();
     }
 
-
-    // call this method only if you are on 6.0 and up, otherwise call doGetWifi()
-
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -200,20 +195,12 @@ public class MainActivity extends AppCompatActivity
                         LocationWatcherIntent.MSG_REGISTER_CLIENT);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
-
-                // Give it some value as an example.
-             //   msg = Message.obtain(null,
-               //         LocationWatcherIntent.MSG_SET_VALUE, this.hashCode(), 0);
-               // mService.send(msg);
             } catch (RemoteException e) {
                 // In this case the service has crashed before we could even
                 // do anything with it; we can count on soon being
                 // disconnected (and then reconnected if it can be restarted)
                 // so there is no need to do anything here.
             }
-
-            // Tell the user about this for our demo.
-           // Toast.makeText(ScriptGroup.Binding.this, "Connected! Wohoo!", Toast.LENGTH_SHORT).show();
         }
 
         public void onServiceDisconnected(ComponentName className) {
