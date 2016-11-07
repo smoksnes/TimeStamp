@@ -12,10 +12,9 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="se.moksnes.sebastian.timestamp.MainActivity"
     tools:showIn="@layout/app_bar_main">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/fooText" />
+    <fragment android:name="se.moksnes.sebastian.timestamp.Fragments.CurrentDayFragment"
+        android:id="@+id/currentDayFragment"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

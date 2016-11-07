@@ -176,7 +176,7 @@ public class LocationWatcherIntent extends Service {
 
     private void resetTimer(){
         mTimer = new Timer();
-        mTimer.schedule(new getWifiTask(),10000);
+        mTimer.schedule(new getWifiTask(),360000);
     }
     // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
@@ -185,15 +185,8 @@ public class LocationWatcherIntent extends Service {
         }
         @Override
         public void handleMessage(Message msg) {
-            // Normally we would do some work here, like download a file.
-            // For our sample, we just sleep for 5 seconds.
-
             resetTimer();
             mWifiManager.startScan();
-
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
-            //stopSelf(msg.arg1);
         }
     }
 }
