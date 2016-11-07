@@ -2,6 +2,7 @@ package se.moksnes.sebastian.timestamp;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;

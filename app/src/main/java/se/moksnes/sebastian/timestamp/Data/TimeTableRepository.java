@@ -13,10 +13,18 @@ import java.util.Date;
 
 public class TimeTableRepository {
 
-    public Long insert(Context context, Boolean in){
+    private Context mContext;
+
+    public TimeTableRepository(Context context){
+
+        mContext = context;
+    }
+
+
+    public Long insert(Boolean in){
         Long ms = System.currentTimeMillis();
 
-        TimeTableHelper mDbHelper = new TimeTableHelper(context);
+        TimeTableHelper mDbHelper = new TimeTableHelper(mContext);
 
         //mDbHelper.dropDb(context);
 
@@ -38,8 +46,8 @@ public class TimeTableRepository {
         return ms;
     }
 
-    public boolean isIn(Context context){
-        TimeTableHelper mDbHelper = new TimeTableHelper(context);
+    public boolean isIn(){
+        TimeTableHelper mDbHelper = new TimeTableHelper(mContext);
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 

@@ -23,6 +23,8 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import se.moksnes.sebastian.timestamp.Data.TimeTableContract;
+import se.moksnes.sebastian.timestamp.Data.TimeTableRepository;
 import se.moksnes.sebastian.timestamp.R;
 import se.moksnes.sebastian.timestamp.Receivers.LocationWatcherIntent;
 
@@ -35,6 +37,7 @@ import se.moksnes.sebastian.timestamp.Receivers.LocationWatcherIntent;
  * create an instance of this fragment.
  */
 public class CurrentDayFragment extends Fragment {
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -42,7 +45,6 @@ public class CurrentDayFragment extends Fragment {
 
     private Boolean mIsBound = false;
     private View _view;
-
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -88,6 +90,7 @@ public class CurrentDayFragment extends Fragment {
         // Required empty public constructor
     }
 
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -113,8 +116,6 @@ public class CurrentDayFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-
         if (isMyServiceRunning(LocationWatcherIntent.class)) {
             Activity activity = getActivity();
             Intent intent = new Intent(activity, LocationWatcherIntent.class);
@@ -123,12 +124,24 @@ public class CurrentDayFragment extends Fragment {
         doBindService();
     }
 
+    private void setInitialState() {
+        TimeTableRepository repo = new TimeTableRepository(getActivity());
+        Boolean isIn = repo.isIn();
+        TextView textView = (TextView) _view.findViewById(R.id.current);
+        if(isIn)  {
+            textView.setText("Inne");
+        }else{
+            textView.setText("Ute");
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         _view = inflater.inflate(R.layout.fragment_current_day, container, false);
+        setInitialState();
         return _view;
     }
 

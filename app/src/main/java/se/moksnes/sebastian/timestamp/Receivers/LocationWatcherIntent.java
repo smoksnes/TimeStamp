@@ -85,11 +85,10 @@ public class LocationWatcherIntent extends Service {
     final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     public void stateChanged(boolean isIn){
-        Context context= getApplicationContext();
-        Boolean currentState = repo.isIn(context);
+        Boolean currentState = repo.isIn();
 
         if(currentState != isIn){
-            long ms = repo.insert(context, isIn);
+            long ms = repo.insert(isIn);
             Toast.makeText(getApplicationContext(), "State changed", Toast.LENGTH_SHORT).show();
             int state = isIn ? MSG_STATE_IN : MSG_STATE_OUT;
             Message msg = Message.obtain(null, state, ms);
@@ -150,11 +149,7 @@ public class LocationWatcherIntent extends Service {
         // Get the HandlerThread's Looper and use it for our Handler
         mServiceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(mServiceLooper);
-
-        repo = new TimeTableRepository();
-
-
-
+        repo = new TimeTableRepository(getApplicationContext());
     }
 
     @Override
