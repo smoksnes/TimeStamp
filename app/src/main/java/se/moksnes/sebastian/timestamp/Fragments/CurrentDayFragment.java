@@ -25,6 +25,7 @@ import java.util.Date;
 
 import se.moksnes.sebastian.timestamp.Data.TimeTableContract;
 import se.moksnes.sebastian.timestamp.Data.TimeTableRepository;
+import se.moksnes.sebastian.timestamp.Models.TimeStamp;
 import se.moksnes.sebastian.timestamp.R;
 import se.moksnes.sebastian.timestamp.Receivers.LocationWatcherIntent;
 
@@ -127,6 +128,8 @@ public class CurrentDayFragment extends Fragment {
     private void setInitialState() {
         TimeTableRepository repo = new TimeTableRepository(getActivity());
         Boolean isIn = repo.isIn();
+
+        TimeStamp[] currentDay = repo.getDay();
         TextView textView = (TextView) _view.findViewById(R.id.current);
         if(isIn)  {
             textView.setText("Inne");
