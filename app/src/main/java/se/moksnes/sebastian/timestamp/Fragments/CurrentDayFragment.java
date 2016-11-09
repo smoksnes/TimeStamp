@@ -17,11 +17,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import se.moksnes.sebastian.timestamp.Data.TimeTableContract;
 import se.moksnes.sebastian.timestamp.Data.TimeTableRepository;
@@ -63,16 +67,18 @@ public class CurrentDayFragment extends Fragment {
         public void handleMessage(Message msg) {
 
             if(msg.what == LocationWatcherIntent.MSG_STATE_IN || msg.what == LocationWatcherIntent.MSG_STATE_OUT){
-                TextView textView = (TextView) _view.findViewById(R.id.current);
+               // TextView textView = (TextView) _view.findViewById(R.id.current);
                 long time = (long) msg.obj;
+                updateGui();
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                 String dateString = formatter.format(new Date(time));
+               /*
                 if(msg.what == LocationWatcherIntent.MSG_STATE_IN){
                     textView.setText("In "+ dateString);
                 }
                 else{
                     textView.setText("Ute " + dateString);
-                }
+                }*/
                 //Toast.makeText(getApplicationContext(), "Got message.", Toast.LENGTH_SHORT).show();
             }
 
@@ -125,26 +131,12 @@ public class CurrentDayFragment extends Fragment {
         doBindService();
     }
 
-    private void setInitialState() {
-        TimeTableRepository repo = new TimeTableRepository(getActivity());
-        Boolean isIn = repo.isIn();
-
-        TimeStamp[] currentDay = repo.getDay();
-        TextView textView = (TextView) _view.findViewById(R.id.current);
-        if(isIn)  {
-            textView.setText("Inne");
-        }else{
-            textView.setText("Ute");
-        }
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         _view = inflater.inflate(R.layout.fragment_current_day, container, false);
-        setInitialState();
+        updateGui();
         return _view;
     }
 
@@ -256,5 +248,39 @@ public class CurrentDayFragment extends Fragment {
             activity.unbindService(mConnection);
             mIsBound = false;
         }
+    }
+
+    void updateGui(){
+        TimeTableRepository repo = new TimeTableRepository(getActivity());
+        Boolean isIn = repo.isIn();
+
+        TimeStamp[] currentDay = repo.getDay();
+
+        ListView lv = (ListView)_view.findViewById(R.id.current);
+
+        // Instanciating an array list (you don't need to do this,
+        // you already have yours).
+        List<String> arrayList = new ArrayList<String>();
+        for(int i = 0; i< currentDay.length; i++){
+            TimeStamp day = currentDay[i];
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String inTime = formatter.format(new Date(day.in)) + " - ";
+
+            if(day.out > 0) {
+                String outTime = formatter.format(new Date(day.out));
+                inTime = inTime + outTime;
+            }
+            arrayList.add(inTime);
+        }
+
+        // This is the array adapter, it takes the context of the activity as a
+        // first parameter, the type of list view as a second parameter and your
+        // array as a third parameter.
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                getContext(),
+                android.R.layout.simple_list_item_1,
+                arrayList );
+
+        lv.setAdapter(arrayAdapter);
     }
 }

@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class TimeTableHelper extends SQLiteOpenHelper {
 
+    private static final String DATETIME_TYPE = " DATETIME DEFAULT CURRENT_TIMESTAMP";
     private static final String INTEGER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
@@ -22,7 +23,7 @@ public class TimeTableHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + TimeTableContract.TableEntry.TABLE_NAME;
 
         // If you change the database schema, you must increment the database version.
-        public static final int DATABASE_VERSION = 2;
+        public static final int DATABASE_VERSION = 3;
         public static final String DATABASE_NAME = "TimeTable.db";
 
         public TimeTableHelper(Context context) {

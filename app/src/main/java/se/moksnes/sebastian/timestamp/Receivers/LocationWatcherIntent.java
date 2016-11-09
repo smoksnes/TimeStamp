@@ -122,7 +122,7 @@ public class LocationWatcherIntent extends Service {
                 boolean isIn = false;
                 resetTimer();
                 for(ScanResult result : mScanResults){
-                    if(result.SSID.equals("Moksnes Wireless MkII")){
+                    if(result.SSID.equals("SCB-Client")){ // Moksnes Wireless MkII
                         isIn = true;
                     }
                 }

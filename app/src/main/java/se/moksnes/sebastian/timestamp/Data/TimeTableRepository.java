@@ -64,8 +64,8 @@ public class TimeTableRepository {
             if  (c.moveToFirst()) {
                 do {
                     TimeStamp stamp = new TimeStamp();
-                    stamp.in = c.getInt(0);
-                    stamp.out = c.getInt(1);
+                    stamp.in = c.getLong(0);
+                    stamp.out = c.getLong(1);
                     items.add(stamp);
                 }while (c.moveToNext());
             }
@@ -81,6 +81,12 @@ public class TimeTableRepository {
 
     public Long stampOut(){
         Long ms = System.currentTimeMillis();
+
+
+        Date myDate = new Date();
+        long timeMilliseconds = myDate.getTime();
+
+        Date date = new Date(ms);
 
         TimeTableHelper mDbHelper = new TimeTableHelper(mContext);
 
@@ -104,9 +110,7 @@ public class TimeTableRepository {
 // How you want the results sorted in the resulting Cursor
         String sortOrder =
                 TimeTableContract.TableEntry._ID + " DESC";
-        Cursor c = null;
-try {
-    c = db.query(
+        Cursor c = db.query(
             TimeTableContract.TableEntry.TABLE_NAME,                     // The table to query
             projection,                               // The columns to return
             null,                                // The columns for the WHERE clause
@@ -116,10 +120,6 @@ try {
             sortOrder,                                     // don't filter by row groups
             "1");                                 // The sort order
 
-}
-catch (Exception e){
-    String foo = "f";
-}
         if(c == null || c.getCount() == 0){
             return null;
         }
@@ -145,6 +145,11 @@ catch (Exception e){
 
     public Long stampIn(){
         Long ms = System.currentTimeMillis();
+
+        Date myDate = new Date();
+        long timeMilliseconds = myDate.getTime();
+
+        Date date = new Date(ms);
 
         TimeTableHelper mDbHelper = new TimeTableHelper(mContext);
 
