@@ -117,7 +117,7 @@ public class CurrentDayFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        if (isMyServiceRunning(LocationWatcherIntent.class)) {
+        if (!isMyServiceRunning(LocationWatcherIntent.class)) {
             Activity activity = getActivity();
             Intent intent = new Intent(activity, LocationWatcherIntent.class);
             activity.startService(intent);

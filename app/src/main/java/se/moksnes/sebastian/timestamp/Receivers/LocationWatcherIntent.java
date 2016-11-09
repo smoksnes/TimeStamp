@@ -88,8 +88,16 @@ public class LocationWatcherIntent extends Service {
         Boolean currentState = repo.isIn();
 
         if(currentState != isIn){
-            long ms = repo.insert(isIn);
-            Toast.makeText(getApplicationContext(), "State changed", Toast.LENGTH_SHORT).show();
+            long ms;
+            if(isIn){
+                ms = repo.stampIn();
+                Toast.makeText(getApplicationContext(), "Stämplat in.", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                ms = repo.stampOut();
+                Toast.makeText(getApplicationContext(), "Stämplat ut.", Toast.LENGTH_SHORT).show();
+            }
+
             int state = isIn ? MSG_STATE_IN : MSG_STATE_OUT;
             Message msg = Message.obtain(null, state, ms);
             for (int i=mClients.size()-1; i>=0; i--) {
@@ -171,7 +179,7 @@ public class LocationWatcherIntent extends Service {
 
     private void resetTimer(){
         mTimer = new Timer();
-        mTimer.schedule(new getWifiTask(),360000);
+        mTimer.schedule(new getWifiTask(),60000);
     }
     // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {

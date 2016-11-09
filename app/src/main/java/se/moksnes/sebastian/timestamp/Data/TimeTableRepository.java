@@ -33,8 +33,8 @@ public class TimeTableRepository {
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] projection = {
-                TimeTableContract.TableEntry.COLUMN_NAME_Operation,
-                TimeTableContract.TableEntry.COLUMN_NAME_Time,
+                TimeTableContract.TableEntry.COLUMN_NAME_In,
+                TimeTableContract.TableEntry.COLUMN_NAME_Out,
               //  "strftime('%Y-%m', Time / 1000, 'unixepoch')"
              //   "date(" + TimeTableContract.TableEntry.COLUMN_NAME_Time + "/1000, 'unixepoch')",
                // "date('now')"
@@ -42,11 +42,11 @@ public class TimeTableRepository {
 
 
 
-        String whereClause = "date(" + TimeTableContract.TableEntry.COLUMN_NAME_Time + "/1000, 'unixepoch')=date('now')";
+        String whereClause = "date(" + TimeTableContract.TableEntry.COLUMN_NAME_In + "/1000, 'unixepoch')=date('now')";
         String [] whereArgs = {"date('now')"};
 
         String sortOrder =
-                TimeTableContract.TableEntry.COLUMN_NAME_Time + " DESC";
+                TimeTableContract.TableEntry.COLUMN_NAME_In + " DESC";
 
         Cursor c = db.query(
                 TimeTableContract.TableEntry.TABLE_NAME,                     // The table to query
@@ -64,8 +64,8 @@ public class TimeTableRepository {
             if  (c.moveToFirst()) {
                 do {
                     TimeStamp stamp = new TimeStamp();
-                    stamp.time = c.getInt(1);
-                    stamp.operation = c.getInt(0);
+                    stamp.in = c.getInt(0);
+                    stamp.out = c.getInt(1);
                     items.add(stamp);
                 }while (c.moveToNext());
             }
@@ -79,25 +79,82 @@ public class TimeTableRepository {
     }
 
 
-    public Long insert(Boolean in){
+    public Long stampOut(){
         Long ms = System.currentTimeMillis();
 
         TimeTableHelper mDbHelper = new TimeTableHelper(mContext);
 
-        //mDbHelper.dropDb(context);
+        // Gets the data repository in write mode
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        //Cursor c = db.rawQuery("SELECT _id FROM ? WHERE ? IS NOT NULL ORDER BY _id DESC LIMIT 1;", new String[]{TimeTableContract.TableEntry.TABLE_NAME, TimeTableContract.TableEntry.COLUMN_NAME_Out});
+
+
+        // Define a projection that specifies which columns from the database
+// you will actually use after this query.
+        String[] projection = {
+                TimeTableContract.TableEntry._ID,
+                TimeTableContract.TableEntry.COLUMN_NAME_Out,
+        };
+
+      //  String whereClause = "date(" + TimeTableContract.TableEntry.COLUMN_NAME_In + "/1000, 'unixepoch')=date('now')";
+        //String [] whereArgs = {"date('now')"};
+
+
+// How you want the results sorted in the resulting Cursor
+        String sortOrder =
+                TimeTableContract.TableEntry._ID + " DESC";
+        Cursor c = null;
+try {
+    c = db.query(
+            TimeTableContract.TableEntry.TABLE_NAME,                     // The table to query
+            projection,                               // The columns to return
+            null,                                // The columns for the WHERE clause
+            null,                            // The values for the WHERE clause
+            null,                                     // don't group the rows
+            null,
+            sortOrder,                                     // don't filter by row groups
+            "1");                                 // The sort order
+
+}
+catch (Exception e){
+    String foo = "f";
+}
+        if(c == null || c.getCount() == 0){
+            return null;
+        }
+        c.moveToFirst();
+        if(!c.isNull(1)){
+            // Already stamped out...
+            return null;
+        }
+        int id = c.getInt(0);
+
+// Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(TimeTableContract.TableEntry.COLUMN_NAME_Out, ms);
+
+        String whereClause = "_id = ?";
+        String [] whereArgs = {String.valueOf(id)};
+        db = mDbHelper.getWritableDatabase();
+
+// Insert the new row, returning the primary key value of the new row
+        db.update(TimeTableContract.TableEntry.TABLE_NAME, values, whereClause, whereArgs);
+        return ms;
+    }
+
+    public Long stampIn(){
+        Long ms = System.currentTimeMillis();
+
+        TimeTableHelper mDbHelper = new TimeTableHelper(mContext);
 
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        int operation = 2;
-        if(in){
-            operation = 1;
-        }
 
 // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
-        values.put(TimeTableContract.TableEntry.COLUMN_NAME_Time, ms);
-        values.put(TimeTableContract.TableEntry.COLUMN_NAME_Operation, operation);
+        values.put(TimeTableContract.TableEntry.COLUMN_NAME_In, ms);
 
 // Insert the new row, returning the primary key value of the new row
         db.insert(TimeTableContract.TableEntry.TABLE_NAME, null, values);
@@ -108,17 +165,18 @@ public class TimeTableRepository {
         TimeTableHelper mDbHelper = new TimeTableHelper(mContext);
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
+//TODO: Check if already in...
 
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
         String[] projection = {
-                TimeTableContract.TableEntry.COLUMN_NAME_Operation,
+                TimeTableContract.TableEntry.COLUMN_NAME_Out,
         };
 
 
 // How you want the results sorted in the resulting Cursor
         String sortOrder =
-                TimeTableContract.TableEntry.COLUMN_NAME_Time + " DESC";
+                TimeTableContract.TableEntry.COLUMN_NAME_In + " DESC";
 
         Cursor c = db.query(
                 TimeTableContract.TableEntry.TABLE_NAME,                     // The table to query
@@ -133,8 +191,8 @@ public class TimeTableRepository {
 
 
         if(c!= null && c.getCount() > 0) {
-            long itemId = c.getInt(0);
-            return itemId == 1;
+            boolean isNull = c.isNull(0);
+            return isNull;
         }
         return false;
     }

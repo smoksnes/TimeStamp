@@ -5,6 +5,6 @@ package se.moksnes.sebastian.timestamp.Models;
  */
 
 public class TimeStamp {
-    public long time;
-    public int operation;
+    public long in;
+    public long out;
 }
