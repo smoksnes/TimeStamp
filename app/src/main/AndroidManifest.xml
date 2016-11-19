@@ -18,11 +18,17 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".Receivers.LocationWatcherIntent" />
+        <!-- Declaring broadcast receiver for BOOT_COMPLETED event. -->
+        <receiver android:name=".Receivers.StartupReceiver" android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <service android:name=".Receivers.LocationWatcherIntent" android:process=":remote" />
+        <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     </application>
 
 </manifest>
